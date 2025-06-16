@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoBank - Регистрация</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Добро пожаловать в TechnoBank</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Главное</a></li>
+                <li><a href="#">О нас</a></li>
+                <li><a href="#">Контакты</a></li>
+                {% if user.is_authenticated %}
+                <p>Привет {{ user.username }}</p> 
+                <li><a href="{% url 'logout_user' %}">Выйти</a></li>
+                {% else %}
+                <li><a href="{% url 'login_user' %}">Войти</a></li>
+                <li><a href="{% url 'register' %}">Регистарация</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+      <div class="messages">
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+	</div>
+    <section class="register">
+        <form action="{% url 'register' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </section>
+</body>
+</html>
