@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoBank</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Добро пожаловать в <span class="logo">TechnoBank</span></h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Главное</a></li>
+                <li><a href="#">О нас</a></li>
+                <li><a href="#">Контакты</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="#">Мои Счета</a></li>
+                    <li><a href="{% url 'logout_user' %}">Выйти</a></li>
+                    <li class="welcome">Привет, {{ user.username }} 👋</li>
+                {% else %}
+                    <li><a href="{% url 'login_user' %}">Войти</a></li>
+                    <li><a href="{% url 'register' %}">Регистрация</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="messages">
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <section class="summary">
+        <h2>💳 Счета: {{ bank_accounts|length }}</h2>
+        <h2>💰 Общая сумма: {{ total_balance }}</h2>
+    </section>
+
+    <section class="carousel">
+        {% for account in bank_accounts %}
+        <div class="card">
+            <h3>{{ account.account_type }} • {{ account.account_number }}</h3>
+            <p><strong>Пользователь:</strong> {{ account.user }}</p>
+            <p><strong>Баланс:</strong> {{ account.balance }}</p>
+            <p><strong>Создан:</strong> {{ account.created_at|date:"d M Y" }}</p>
+            <p><strong>Обновлён:</strong> {{ account.updated_at|date:"d M Y" }}</p>
+            <a href="{% url 'bank_account_detail' account.pk %}" class="btn">Подробнее</a>
+        </div>
+        {% endfor %}
+    </section>
+</body>
+</html>

@@ -9,7 +9,6 @@ from .models import CustomUser
 
 def register(request):
     if request.method == 'POST':
-        print(request.POST)
         form = CustomUserRegistrationForm(request.POST, request.FILES) # request.POST это дикт с данными пользователя {'phone_number': "+773217836"}
         if form.is_valid():
             user = form.save(commit=False)

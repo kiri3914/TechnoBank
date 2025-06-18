@@ -12,11 +12,15 @@
         <h1>Добро пожаловать в TechnoBank</h1>
         <nav>
             <ul>
-                <li><a href="#">Главное</a></li>
+                <li><a href="{% url 'index' %}">Главное</a></li>
                 <li><a href="#">О нас</a></li>
                 <li><a href="#">Контакты</a></li>
                 {% if user.is_authenticated %}
+                
+                <li><a href="{% url 'my_accounts' %}">Мои Счета</a></li>
+                
                 <p>Привет {{ user.username }}</p> 
+
                 <li><a href="{% url 'logout_user' %}">Выйти</a></li>
                 {% else %}
                 <li><a href="{% url 'login_user' %}">Войти</a></li>
@@ -35,5 +39,29 @@
         {% endif %}
 	</div>
     
+    <div class="bank_accounts">
+        <h2>Количество Аккаунтов: {{ bank_accounts|length }}</h2>
+
+       <section class="account-carousel">
+    {% for account in bank_accounts %}
+    <div class="account-card {{ account.account_type|lower }}">
+        <div class="card-top">
+            <div class="card-icon">💳</div>
+            <div class="balance">{{ account.balance|floatformat:"0" }} ₸</div>
+        </div>
+        <div class="card-middle">
+            <p class="account-number">{{ account.account_number }}</p>
+            <p class="account-type">{{ account.account_type }}</p>
+        </div>
+        <div class="card-bottom">
+            <p class="created">Создан: {{ account.created_at|date:"d.m.Y" }}</p>
+            <a href="{% url 'bank_account_detail' account.pk %}" class="btn-glow">Открыть</a>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+    </div>
+
 </body>
 </html>
