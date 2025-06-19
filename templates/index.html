@@ -22,6 +22,7 @@
                 
                 <p>Привет {{ user.username }}</p> 
 
+
                 <li><a href="{% url 'logout_user' %}">Выйти</a></li>
                 {% else %}
                 <li><a href="{% url 'login_user' %}">Войти</a></li>

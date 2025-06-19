@@ -15,6 +15,9 @@
                 <li><a href="{% url 'index' %}">Главное</a></li>
                 <li><a href="#">О нас</a></li>
                 <li><a href="#">Контакты</a></li>
+                <li><a href="{% url 'creates' %}">Создать счет</a></li>
+                <li><a href="{% url 'delete_bank' %}">Удалить все!!!!! счет</a></li>
+
                 {% if user.is_authenticated %}
                     <li><a href="#">Мои Счета</a></li>
                     <li><a href="{% url 'logout_user' %}">Выйти</a></li>

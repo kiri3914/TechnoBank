@@ -34,6 +34,17 @@ def my_accounts(request):
 
 
 @login_required
+def creates(request):
+    BankAccount.objects.create(
+            user=request.user,
+        )
+    messages.success(request, 'Создан успешно')
+    return redirect('my_accounts')
+def delete_bank(request):
+    BankAccount.objects.filter(user=request.user).delete()
+    messages.success(request, 'Удалено')
+    return redirect('my_accounts')
+
 def transfer_view(request):
     if request.method == 'POST':
         form = TransferForm(request.POST)
@@ -87,3 +98,4 @@ def transfer_view(request):
     else:
         form = TransferForm(initial={'transfer_type': 'card'})
     return render(request, 'transfer.html', {'form': form})
+
