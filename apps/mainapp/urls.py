@@ -8,6 +8,8 @@ urlpatterns = [
     path('transfer/', views.transfer_view, name='transfer_view'),
     path('creates/', views.creates, name='creates'),
     path('delete_bank/', views.delete_bank, name='delete_bank'),
+    path('delete_bank_one/<int:pk>', views.delete_bank_one, name='delete_bank_one'),
+
 
 
 ]

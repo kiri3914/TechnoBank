@@ -44,7 +44,10 @@ def delete_bank(request):
     BankAccount.objects.filter(user=request.user).delete()
     messages.success(request, 'Удалено')
     return redirect('my_accounts')
-
+def delete_bank_one(request, pk):
+    BankAccount.objects.get(pk=pk).delete()
+    messages.success(request, 'Удален')
+    return redirect('my_accounts')
 def transfer_view(request):
     if request.method == 'POST':
         form = TransferForm(request.POST)

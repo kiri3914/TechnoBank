@@ -18,6 +18,7 @@
                 <li><a href="{% url 'creates' %}">Создать счет</a></li>
                 <li><a href="{% url 'delete_bank' %}">Удалить все!!!!! счет</a></li>
 
+
                 {% if user.is_authenticated %}
                     <li><a href="#">Мои Счета</a></li>
                     <li><a href="{% url 'logout_user' %}">Выйти</a></li>
@@ -54,6 +55,9 @@
             <p><strong>Создан:</strong> {{ account.created_at|date:"d M Y" }}</p>
             <p><strong>Обновлён:</strong> {{ account.updated_at|date:"d M Y" }}</p>
             <a href="{% url 'bank_account_detail' account.pk %}" class="btn">Подробнее</a>
+
+            <a href="{% url 'delete_bank_one' account.pk %}" button>Удалить счет</a>
+
         </div>
         {% endfor %}
     </section>
