@@ -36,7 +36,7 @@ def my_accounts(request):
 @login_required
 def transfer_view(request):
     if request.method == 'POST':
-        form = TransferForm(request.user, request.POST)
+        form = TransferForm(request.POST)
         if form.is_valid():
             amount = form.cleaned_data['amount']
             description = form.cleaned_data['description']
@@ -59,7 +59,7 @@ def transfer_view(request):
                 receiver_phone = form.cleaned_data['receiver_phone_number']
                 try: 
                     receiver_user = CustomUser.objects.get(phone_number=receiver_phone)
-                    receiver_account = BankAccount.objects.filter(user=receiver_user)
+                    receiver_account = BankAccount.objects.filter(user=receiver_user).first()
                     if not receiver_account:
                         messages.error(request, f'У пользователя с номером {receiver_phone} нет активных счетов')
                         return redirect('transfer_view')
@@ -85,5 +85,5 @@ def transfer_view(request):
                     messages.error(request, "Недостаточно средств на счете.")
             return redirect('transfer_view')
     else:
-        form = TransferForm(request.user, initial={'transfer_type': 'card'})
+        form = TransferForm(initial={'transfer_type': 'card'})
     return render(request, 'transfer.html', {'form': form})

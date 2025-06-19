@@ -40,13 +40,13 @@
             {% endif %}
         </div>
 
-        <form method="post">
+        <form method="POST" action="{% url 'transfer_view' %}">
             {% csrf_token %}
             <!-- Переключатель в виде карточек -->
             <div class="card-switcher">
                 {% for choice in form.transfer_type.field.choices %}
                 <label class="card-option {% if form.transfer_type.value == choice.0 %}active{% endif %}" data-value="{{ choice.0 }}">
-                    <input type="radio" name="transfer_type" value="{{ choice.0 }}" {% if forloop.first %}checked{% endif %} style="display: none;">
+                    <input type="radio" name="transfer_type" value="{{ choice.0 }}" {% if forloop.first %}checked{% endif %}>
                     <span>{{ choice.1 }}</span>
                 </label>
                 {% endfor %}
@@ -83,37 +83,54 @@
     </main>
 
     <!-- JavaScript для переключения полей -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cardOptions = document.querySelectorAll('.card-option');
-            const cardField = document.getElementById('card-field');
-            const phoneField = document.getElementById('phone-field');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cardOptions = document.querySelectorAll('.card-option');
+        const cardField = document.getElementById('card-field');
+        const phoneField = document.getElementById('phone-field');
+        const form = document.querySelector('form');
 
-            function toggleFields() {
-                const selectedType = document.querySelector('input[name="transfer_type"]:checked').value;
-                cardOptions.forEach(option => {
-                    option.classList.toggle('active', option.getAttribute('data-value') === selectedType);
-                });
-                if (selectedType === 'card') {
-                    cardField.style.display = 'block';
-                    phoneField.style.display = 'none';
-                } else if (selectedType === 'phone') {
-                    cardField.style.display = 'none';
-                    phoneField.style.display = 'block';
-                }
-            }
+        function toggleFields() {
+            const selectedRadio = document.querySelector('input[name="transfer_type"]:checked');
+            if (!selectedRadio) return;
 
-            // Устанавливаем начальное состояние
-            toggleFields();
+            const selectedType = selectedRadio.value;
 
-            // Обработчик изменения выбора
+            // Обновляем активные классы
             cardOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    this.querySelector('input').checked = true;
+                option.classList.toggle('active', option.getAttribute('data-value') === selectedType);
+            });
+
+            // Показываем нужное поле
+            if (selectedType === 'card') {
+                cardField.style.display = 'block';
+                phoneField.style.display = 'none';
+            } else if (selectedType === 'phone') {
+                cardField.style.display = 'none';
+                phoneField.style.display = 'block';
+            }
+        }
+
+        // Первичная инициализация
+        toggleFields();
+
+        // Обработчики кликов по карточкам
+        cardOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
                     toggleFields();
-                });
+                }
             });
         });
-    </script>
+
+        // Для отладки — вывод в консоль при отправке
+        form.addEventListener('submit', function(e) {
+            console.log('Форма отправляется...');
+        });
+    });
+</script>
+
 </body>
 </html>

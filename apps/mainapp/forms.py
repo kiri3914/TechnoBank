@@ -6,47 +6,49 @@ class TransferForm(forms.Form):
         choices=[('card', 'Номер карты'), ('phone', 'Номер телефона')],
         initial='card',
         widget=forms.RadioSelect
-        )
+    )
     receiver_card_number = forms.CharField(
         max_length=20,
-        required=False,
+        required=False,  # Не делаем обязательным изначально
         label='Номер карты получателя',
         widget=forms.TextInput(attrs={'placeholder': 'Введите номер карты (16 цифр)'})
-        )
+    )
     receiver_phone_number = forms.CharField(
         max_length=15,
-        required=False,
+        required=False,  # Не делаем обязательным изначально
         label='Номер телефона получателя',
         widget=forms.TextInput(attrs={'placeholder': '+7XXXYYYZZZZ'})
-        )
+    )
     amount = forms.DecimalField(
         max_digits=15,
         decimal_places=2,
         min_value=100.00,
         label='Сумма перевода',
         widget=forms.NumberInput(attrs={'placeholder': 'Введите сумму перевода'})
-        )
+    )
     description = forms.CharField(
-        max_length=200, 
+        max_length=200,
         required=False,
         label='Комментарий',
         widget=forms.Textarea(attrs={'placeholder': 'Введите комментарий', 'rows': 4})
     )
 
+    def clean(self):
+        cleaned_data = super().clean()
+        transfer_type = cleaned_data.get('transfer_type')
+        receiver_card_number = cleaned_data.get('receiver_card_number')
+        receiver_phone_number = cleaned_data.get('receiver_phone_number')
 
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
+        # Проверяем, заполнено ли требуемое поле в зависимости от transfer_type
+        if transfer_type == 'card' and not receiver_card_number:
+            raise forms.ValidationError("Пожалуйста, введите номер карты.")
+        elif transfer_type == 'phone' and not receiver_phone_number:
+            raise forms.ValidationError("Пожалуйста, введите номер телефона.")
+        elif transfer_type not in ['card', 'phone']:
+            raise forms.ValidationError("Выберите тип перевода.")
 
-        if 'initial' in kwargs and kwargs['initial'].get('transfer_type') == 'card':
-            self.fields['receiver_card_number'].required = True
-            self.fields['receiver_phone_number'].required = False
-        elif 'initial' in kwargs and kwargs['initial'].get('transfer_type') == 'phone':
-            self.fields['receiver_card_number'].required = False
-            self.fields['receiver_phone_number'].required = True
-    
-    def clean_receiver_card_number(self):
-        card_number = self.cleaned_data.get('receiver_card_number')
-        if card_number and not (len(card_number) == 16 and card_number.isdigit()):
-            raise forms.ValidationError('Номер карты должен состаять из 16 цифр')
-        return card_number
+        # Дополнительная валидация номера карты
+        if receiver_card_number and not (len(receiver_card_number) == 16 and receiver_card_number.isdigit()):
+            raise forms.ValidationError("Номер карты должен состоять из 16 цифр.")
+
+        return cleaned_data
